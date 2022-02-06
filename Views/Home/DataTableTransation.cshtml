@@ -1,0 +1,32 @@
+@model HomeModel.DataPlayer;
+
+<div class="table-responsive">
+    <table class="table align-items-center table-flush">
+        <thead class="thead-light">
+        <tr>
+            <th scope="col">TimeStamp</th>
+            <th scope="col">ชื่อเหรียญ</th>
+            <th scope="col">จำนวน</th>
+        </tr>
+        </thead>
+        <tbody>
+        @if (Model?.LsTrans.Count() > 0)
+        {
+            @foreach (var item1 in Model.LsTrans)
+            {
+                <tr>
+                    <td>
+                        @item1.Modifydate
+                    </td>
+                    <td>
+                        @item1.CoinCode (@item1.CoinName)
+                    </td>
+                    <td>
+                        @item1.CoinUnit
+                    </td>
+                </tr>
+            }
+        }    
+        </tbody>
+    </table>
+</div>

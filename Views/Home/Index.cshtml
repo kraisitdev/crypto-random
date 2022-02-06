@@ -1,0 +1,147 @@
+﻿@using static crypto_random.Models.HomeModel;
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome To</h1>
+    <h1 class="display-5">Crypto Random Game</h1>
+</div>
+
+
+<div class="d-flex justify-content-center">
+    <div class="row gy-2 gx-3 align-items-center">
+        <div class="col-auto">
+            <select id="ddlPlayer" class="form-select">
+            <option value="" selected>-- เลือกผู้เล่น --</option>
+                @foreach (var item1 in (List<Player>)ViewBag.lsPlayer)
+                {
+                     <option value=@item1.PlayerName> @item1.PlayerName</option>
+                }
+            </select>
+        </div>
+        <div class="col-auto">
+            <button id="btnPlay" type="button" class="btn btn-primary">เริ่มเล่น</button>
+            <button id="btnStop" type="button" class="btn btn-danger">หยุดเล่น</button>
+        </div>
+
+        <br />
+            <button id="btnRandom" type="button" class="btn btn-success">เริ่มสุ่มเหรียญ</button>
+        <br />
+
+         <div id="tblTransaction"></div>
+
+
+    </div>
+</div>
+
+
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(() => {
+            enablePlay()
+        })
+        
+        function enablePlay(){
+            $('#btnPlay').prop('hidden', false)
+            $('#btnStop').prop('hidden', true)
+            $('#btnRandom').prop('hidden', true)
+            $('#ddlPlayer').prop('disabled', false)
+            $('#tblTransaction').html('')
+        }
+
+        function disablePlay(){
+            $('#btnPlay').prop('hidden', true)
+            $('#btnStop').prop('hidden', false)
+            $('#btnRandom').prop('hidden', false)
+            $('#ddlPlayer').prop('disabled', true)
+        }
+
+        function loadDataTableTransaction() {
+            debugger
+
+            const currPlayer = $('#ddlPlayer').val();
+            $.ajax({
+                type: 'POST',
+                url: '/Home/LoadDataTableTransaction',
+                data: {playerName: currPlayer},
+                success: function (res) {
+                    $('#tblTransaction').html(res)
+                },
+            })
+        }
+
+       $('#btnPlay').click((event)=>{
+            const currPlayer = $('#ddlPlayer').val();
+
+            if (currPlayer === ''){
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'โปรดเลือกผู้เล่น!',
+                    text: '',
+                    allowOutsideClick: false,
+                    allowEnterKey: true,
+                    allowEscapeKey: false,
+                    confirmButtonText: 'ตกลง',
+                    confirmButtonColor: '#2196f3',
+                })
+                return
+            }
+
+            this.disablePlay()
+            this.loadDataTableTransaction()
+       })
+
+       $('#btnStop').click((event)=>{
+            this.enablePlay()
+       })
+
+       $('#btnRandom').click((event)=>{
+           
+            const currPlayer = $('#ddlPlayer').val();
+
+            $.ajax({
+                type: 'POST',
+                url: '/Home/RandomCoin',
+                data: {playerName: currPlayer},
+                success: function (res) {
+                    let timerInterval
+                    Swal.fire({
+                    title: 'กำลังสุ่มเหรียญ...',
+                    timer: 1500,
+                    timerProgressBar: true,
+                        didOpen: () => {
+                            Swal.showLoading()
+                            const b = Swal.getHtmlContainer().querySelector('b')
+                            timerInterval = setInterval(() => {
+                            b.textContent = Swal.getTimerLeft()
+                            }, 100)
+                        },
+                        willClose: () => {
+                            clearInterval(timerInterval)
+                        }
+                        }).then((result) => {
+                        if (result.dismiss === Swal.DismissReason.timer) {
+                            debugger
+                            Swal.fire({
+                                icon: 'success',
+                                title: `${res.resMsg}`,
+                                text: '',
+                                allowOutsideClick: false,
+                                allowEnterKey: true,
+                                allowEscapeKey: false,
+                                confirmButtonText: 'ตกลง',
+                                confirmButtonColor: '#2196f3',
+                            })
+                             loadDataTableTransaction()
+                        }
+                    })
+
+                   
+                },
+            })
+       })
+
+    </script>
+}
