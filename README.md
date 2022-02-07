@@ -1,14 +1,18 @@
 # crypto-random
 
-## About
+## 📘 About
 
 crypto-random คือ WebApp MVC ที่ใช้สุ่มเหรียญ Crypto จาก BitKub ของแต่ละ Player
 
-## Built With
+## NOTE
+
+- docker network connect {NetworkName} {ContainerName}
+
+## 📦 Built With
 
 - [x] .NET 6 MVC
 
-## Version
+## 🏷 Version
 
 #### v0.1.0
 
@@ -19,7 +23,7 @@ crypto-random คือ WebApp MVC ที่ใช้สุ่มเหรีย
 - Add Service Call BitKub
 - Update UI and BL Crypto Random Game
 
-## Get Started
+## ⚙ Get Started
 
 - 1.Clone project
 
